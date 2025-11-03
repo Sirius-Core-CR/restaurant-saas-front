@@ -1,0 +1,41 @@
+name: React Build & Test
+
+on:
+  push:
+    branches: ["*"]          # Ejecutar en todas las ramas
+  pull_request:
+    branches: ["*"]          # Ejecutar en todos los PR
+
+jobs:
+  build-and-test:
+    name: Lint, Test & Build
+    runs-on: ubuntu-latest   # Sistema operativo base para el runner
+
+    steps:
+      # Descarga el código del repositorio
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Instala y configura Node.js
+      # Usa versión 20 (puedes cambiarla según tu proyecto)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm          # Habilita cache de dependencias
+
+      # Instala dependencias
+      - name: Install dependencies
+        run: npm ci          
+
+      # Revisa el código con ESLint
+      - name: Run ESLint
+        run: npm run lint
+
+      # Ejecuta las pruebas unitarias
+      - name: Run tests
+        run: npm test -- --watchAll=false
+
+      # Verifica que el proyecto compile correctamente
+      - name: Build project
+        run: npm run build
